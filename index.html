@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixels Community</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #050505;
+      color: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg, #00ffe5, #ff00ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    .btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-decoration: none;
+      color: #fff;
+      overflow: hidden;
+      background: rgba(20, 20, 20, 0.9);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn img {
+      width: 28px;
+      height: 28px;
+      z-index: 2;
+    }
+
+    .btn span {
+      z-index: 2;
+    }
+
+    .pixel-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Global background canvas */
+    canvas#pixelCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pixelCanvas"></canvas>
+
+  <h1>Pixels Community</h1>
+
+  <div class="links">
+    <a href="https://chat.whatsapp.com/BTXM7KscIPYG7XM17f5gvt?mode=ems_copy_t" target="_blank" class="btn" data-color="#25D366">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"><span>New Term 1 Group</span>
+    </a>
+    <a href="https://chat.whatsapp.com/BTIciuFf2ULABS0luJSKNo?mode=ems_copy_t" target="_blank" class="btn" data-color="#25D366">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"><span>Pixels Community Group</span>
+    </a>
+    <a href="https://www.instagram.com/the.altra?igsh=aXN6ZmdnendvdzBm" target="_blank" class="btn" data-color="#E1306C">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram"><span>Instagram</span>
+    </a>
+    <a href="https://www.facebook.com/share/1B5cmzrcUP/" target="_blank" class="btn" data-color="#1877F2">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"><span>Facebook</span>
+    </a>
+    <a href="https://discord.gg/tDpBKZSC" target="_blank" class="btn" data-color="#5865F2">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord"><span>Discord</span>
+    </a>
+    <a href="https://www.tiktok.com/@the.altra?_t=ZS-8zhjcLwV1nU&_r=1" target="_blank" class="btn" data-color="#FF0050,#00F2EA">
+      <canvas class="pixel-bg"></canvas>
+      <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok"><span>TikTok</span>
+    </a>
+  </div>
+
+  <script>
+    /* Background pixels (cyan/magenta) */
+    const canvas = document.getElementById("pixelCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let bgPixels = [];
+    class Pixel {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 2;
+        this.speedY = Math.random() * 0.4 + 0.2;
+        this.opacity = Math.random() * 0.5 + 0.3;
+        this.color = Math.random() > 0.5 ? "#00ffe5" : "#ff00ff";
+      }
+      update() { this.y += this.speedY; if (this.y > canvas.height) this.reset(); }
+      draw() { ctx.fillStyle = this.color; ctx.globalAlpha = this.opacity; ctx.fillRect(this.x, this.y, this.size, this.size); ctx.globalAlpha = 1; }
+    }
+    function initBgPixels() { bgPixels = []; for (let i=0; i<80; i++) bgPixels.push(new Pixel()); }
+    function animateBg() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bgPixels.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animateBg);
+    }
+    initBgPixels(); animateBg();
+    window.addEventListener("resize", () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initBgPixels(); });
+
+    /* Button pixel animations */
+    document.querySelectorAll(".btn").forEach(button => {
+      const buttonCanvas = button.querySelector(".pixel-bg");
+      const bctx = buttonCanvas.getContext("2d");
+      buttonCanvas.width = button.offsetWidth;
+      buttonCanvas.height = button.offsetHeight;
+
+      let colors = button.dataset.color.split(",");
+      let btnPixels = [];
+      class BtnPixel {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random() * buttonCanvas.width;
+          this.y = Math.random() * buttonCanvas.height;
+          this.size = Math.random() * 2 + 1;
+          this.speedY = Math.random() * 0.3 + 0.1;
+          this.opacity = Math.random() * 0.6 + 0.2;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+        update() { this.y += this.speedY; if (this.y > buttonCanvas.height) this.reset(); }
+        draw() { bctx.fillStyle = this.color; bctx.globalAlpha = this.opacity; bctx.fillRect(this.x, this.y, this.size, this.size); bctx.globalAlpha = 1; }
+      }
+      function initBtnPixels() { btnPixels = []; for (let i=0; i<25; i++) btnPixels.push(new BtnPixel()); }
+      function animateBtn() {
+        bctx.clearRect(0,0,buttonCanvas.width,buttonCanvas.height);
+        btnPixels.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animateBtn);
+      }
+      initBtnPixels(); animateBtn();
+    });
+  </script>
+</body>
+</html>
